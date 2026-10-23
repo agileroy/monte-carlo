@@ -1,0 +1,9 @@
+{
+  "name": "monte-carlo",
+  "private": true,
+  "type": "module",
+  "description": "Prévisions Monte Carlo à partir du débit réel des équipes",
+  "scripts": {
+    "test": "node --test"
+  }
+}

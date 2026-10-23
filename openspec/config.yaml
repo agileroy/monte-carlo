@@ -1,0 +1,24 @@
+schema: spec-driven
+
+# Project context: constraints an agent cannot infer from the code.
+context: |
+  Rédiger tous les artefacts OpenSpec (proposal, design, specs, tasks) en français.
+  Prévisions Monte Carlo pour les équipes de l'auteur, dépôt public. Utilisateur unique pour l'instant (l'auteur).
+  But : prévoir la livraison d'une équipe à partir de son débit réel (tickets terminés par semaine), sans estimation.
+  Deux questions : « Quand aura-t-on fini ? » (nombre de tickets restants → dates à 50, 85, 95 %)
+  et « Combien d'ici une date ? » (date cible → nombre de tickets livrables à 50, 85, 95 %).
+  Données importées depuis un fichier CSV ou Excel (.xlsx), en général un export Jira (champ « Résolu ») ;
+  à terme, peut-être une capture du diagramme de flux cumulé de Jira ou un connecteur Jira.
+  Les données importées restent dans le navigateur : aucun serveur, aucune base, aucun envoi.
+  Hébergement : site statique sur GitHub Pages (https://vinchou59.github.io/monte-carlo/), sans serveur à maintenir.
+  Aucun service tiers (ni CDN, ni police web, ni traceur) ; les éventuelles bibliothèques sont copiées dans site/vendor/.
+  Le VPN de l'entreprise (proxy Zscaler) bloque GitHub Pages.
+  Stack : HTML/CSS/JavaScript vanilla en modules ES, sans framework ni étape de build (dossier site/),
+  comme matrice-competences et poker-planning.
+  Architecture : site/js/forecast-core.js contient la logique métier pure (dates, lecture des données,
+  semaines, simulation, percentiles), sans DOM ; site/js/xlsx-lite.js lit et écrit les .xlsx
+  (copie du module de matrice-competences) ; site/js/charts.js dessine les graphiques en SVG ;
+  site/js/ui.js gère l'interface.
+  Interface en français ; thème clair ou sombre comme matrice-competences.
+  Tests : lanceur intégré de Node.js (npm test), à faire évoluer avec chaque changement de comportement ;
+  la publication GitHub Actions est bloquée si un test échoue.
