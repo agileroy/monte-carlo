@@ -28,6 +28,7 @@ const HELP = [
   '',
   'Depuis Jira : recherche avancée en JQL, colonnes Clé et Résolu uniquement, puis Exporter › Exporter Excel CSV (champs actuels).',
   `Requête conseillée (remplacer EQ par la clé du projet) : ${historyJql('', ' ')}`,
+  'La requête écarte les tickets annulés (statut « Cancelled ») : adapte le nom du statut s\'il diffère dans ton projet, ou retire cette condition s\'il n\'existe pas.',
   '',
   'Format alternatif, déjà agrégé : deux colonnes « Semaine » (date du lundi) et « Tickets terminés » (nombre).',
   '',

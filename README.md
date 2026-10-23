@@ -42,10 +42,13 @@ Requête JQL conseillée (remplacer `EQ` par la clé du projet) :
 
 ```
 project = EQ AND statusCategory = Done
+AND status != "Cancelled"
 AND resolved >= -27w
 AND issuetype not in subTaskIssueTypes()
 ORDER BY resolved ASC
 ```
+
+La ligne `status != "Cancelled"` écarte les tickets annulés, qui ne sont pas du travail livré : adapte le nom du statut s'il diffère dans ton projet (par exemple « Annulé »), ou retire la ligne s'il n'existe pas.
 
 `-27w` remonte 27 × 7 jours depuis la recherche : une fois la semaine en cours écartée par l'appli, il reste 26 semaines complètes (la plus ancienne, partielle, n'est utilisée qu'avec « Tout l'historique »).
 

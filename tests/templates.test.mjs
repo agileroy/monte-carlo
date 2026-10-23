@@ -15,6 +15,8 @@ test('modèle Excel : deux onglets, colonnes Clé et Résolu seulement, exemples
   assert.match(sheets[1].rows.flat().join('\n'), /Confidentialité/);
   assert.equal(sheets[0].rows.length, 1 + exampleRows(TODAY).length);
   assert.match(sheets[1].rows.flat().join('\n'), /Exporter Excel CSV/);
+  assert.match(sheets[1].rows.flat().join('\n'), /status != "Cancelled"/);
+  assert.match(sheets[1].rows.flat().join('\n'), /adapte le nom du statut/);
 });
 
 test('modèle Excel relu et importé tel quel : onglet de données choisi', async () => {
