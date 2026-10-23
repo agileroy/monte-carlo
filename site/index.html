@@ -65,7 +65,7 @@
       <div class="block">
         <div class="panel-head"><h3>Débit hebdomadaire</h3><span class="small muted" id="hist-range"></span></div>
         <div class="chart-box small" id="ch-hist"></div>
-        <p class="small muted">Les semaines en couleur sont celles utilisées pour la simulation.</p>
+        <p class="hint">Les semaines en couleur sont celles utilisées pour la simulation.</p>
       </div>
 
       <div class="fields">
@@ -108,14 +108,14 @@
             <label for="remaining">Tickets restants à terminer</label>
             <input id="remaining" type="number" min="1" max="5000" step="1" value="40" inputmode="numeric">
           </div>
-          <p class="small muted">Compte dans Jira les tickets non terminés du périmètre (version, epic, release), sans sous-tâches.</p>
+          <p class="note"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9.5"/><path d="M12 11v6M12 7.5h.01"/></svg><span><strong>Conseil</strong> · Compte dans Jira les tickets non terminés du périmètre (version, epic, release), sans sous-tâches.</span></p>
         </div>
         <div class="question" id="q-combien" hidden>
           <div class="field">
             <label for="target">Date cible</label>
             <input id="target" type="date">
           </div>
-          <p class="small muted" id="target-hint"></p>
+          <p class="hint" id="target-hint"></p>
         </div>
 
         <div class="launch">
@@ -178,7 +178,7 @@
             </tbody>
           </table>
         </div>
-        <p class="msg info">Confidentialité : n'exporte ni le titre (<strong>Résumé</strong>) ni la description des tickets. Ils ne servent pas au calcul. Si ton fichier en contient, ces colonnes sont ignorées et rien ne quitte ton navigateur.</p>
+        <p class="note warn"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/><path d="M12 9v4M12 17h.01"/></svg><span><strong>Confidentialité</strong> · N'exporte ni le titre (<strong>Résumé</strong>) ni la description des tickets. Ils ne servent pas au calcul. Si ton fichier en contient, ces colonnes sont ignorées et rien ne quitte ton navigateur.</span></p>
         <h3>Bonnes pratiques</h3>
         <ul class="tips">
           <li>Au moins 8 semaines d'historique ; 12 à 26 semaines donnent les prévisions les plus fiables.</li>
@@ -214,11 +214,11 @@
           <li><div><strong>Ouvrir la recherche avancée</strong><p class="small muted">Dans Jira : <strong>Filtres › Afficher tous les tickets</strong>, puis basculer en mode <strong>JQL</strong>.</p></div></li>
           <li><div><strong>Coller la requête</strong><p class="small muted">Elle récupère les tickets terminés du périmètre choisi ci-dessus sur les 27 dernières semaines, sans sous-tâches : la semaine en cours étant écartée, tu disposes ainsi de 26 semaines complètes.</p>
             <div class="code-wrap"><pre class="code" id="jql1"></pre><button type="button" data-copy="jql1">Copier la requête</button></div>
-            <p class="msg info small">La ligne <span class="mono">AND status != "Cancelled"</span> écarte les tickets annulés, qui ne sont pas du travail livré. Si ce statut porte un autre nom dans ton projet (par exemple « Annulé »), adapte-le dans Jira, ou retire la ligne s'il n'existe pas : Jira signale une erreur pour un statut inconnu.</p></div></li>
+            <p class="note warn"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/><path d="M12 9v4M12 17h.01"/></svg><span><strong>À vérifier</strong> · La ligne <span class="mono">AND status != "Cancelled"</span> écarte les tickets annulés, qui ne sont pas du travail livré. Si ce statut porte un autre nom dans ton projet (par exemple « Annulé »), adapte-le dans Jira, ou retire la ligne s'il n'existe pas : Jira signale une erreur pour un statut inconnu.</span></p></div></li>
           <li><div><strong>Ne garder que « Clé » et « Résolu »</strong><p class="small muted">Via le bouton <strong>Colonnes</strong> en vue liste, garde uniquement <strong>Clé</strong> et <strong>Résolu</strong> : retire <strong>Résumé</strong> et les autres colonnes.</p></div></li>
           <li><div><strong>Exporter</strong><p class="small muted"><strong>Exporter › Exporter Excel CSV (champs actuels)</strong>, puis dépose le fichier dans la zone d'import. La colonne de date est détectée automatiquement.</p></div></li>
         </ol>
-        <p class="small muted">Si la colonne <strong>Résolu</strong> est vide, ton workflow ne renseigne pas la résolution. Remplace alors <span class="mono">resolved</span> par <span class="mono">statusCategoryChangedDate</span> dans la requête et ajoute la colonne <strong>Catégorie de statut modifiée</strong>.</p>
+        <p class="note"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9.5"/><path d="M12 11v6M12 7.5h.01"/></svg><span><strong>Colonne « Résolu » vide ?</strong> · Si la colonne <strong>Résolu</strong> est vide, ton workflow ne renseigne pas la résolution. Remplace alors <span class="mono">resolved</span> par <span class="mono">statusCategoryChangedDate</span> dans la requête et ajoute la colonne <strong>Catégorie de statut modifiée</strong>.</span></p>
       </div>
     </div>
   </details>
