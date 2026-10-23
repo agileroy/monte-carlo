@@ -67,11 +67,11 @@ test('périmètre : projet ou requête du board entre parenthèses', () => {
 });
 
 test('requête d\'historique : projet', () => {
-  assert.equal(historyJql('PAY'), 'project = PAY\nAND statusCategory = Done\nAND resolved >= -26w\nAND issuetype not in subTaskIssueTypes()\nORDER BY resolved ASC');
-  assert.equal(historyJql('', ' '), 'project = EQ AND statusCategory = Done AND resolved >= -26w AND issuetype not in subTaskIssueTypes() ORDER BY resolved ASC');
+  assert.equal(historyJql('PAY'), 'project = PAY\nAND statusCategory = Done\nAND resolved >= -27w\nAND issuetype not in subTaskIssueTypes()\nORDER BY resolved ASC');
+  assert.equal(historyJql('', ' '), 'project = EQ AND statusCategory = Done AND resolved >= -27w AND issuetype not in subTaskIssueTypes() ORDER BY resolved ASC');
 });
 
 test('requête d\'historique : board multi-projets', () => {
   const jql = historyJql({ mode: 'board', filter: 'project in (PAY, MOB) AND component = Front ORDER BY Rank ASC' }, ' ');
-  assert.equal(jql, '(project in (PAY, MOB) AND component = Front) AND statusCategory = Done AND resolved >= -26w AND issuetype not in subTaskIssueTypes() ORDER BY resolved ASC');
+  assert.equal(jql, '(project in (PAY, MOB) AND component = Front) AND statusCategory = Done AND resolved >= -27w AND issuetype not in subTaskIssueTypes() ORDER BY resolved ASC');
 });
