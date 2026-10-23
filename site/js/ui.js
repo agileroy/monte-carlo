@@ -15,7 +15,8 @@ const plural = (n, word) => `${n} ${word}${n > 1 ? 's' : ''}`;
 const today = startOfDay(new Date());
 
 const SAMPLE_MESSAGE = 'Exemple fictif chargé : 26 semaines de tickets terminés. Importe ton propre export pour remplacer ces données.';
-const state = { weeks: sampleWeeks(today), sample: true, tab: 'quand' };
+// `version` change à chaque nouveau jeu de données ; `results` garde le dernier résultat de chaque onglet.
+const state = { weeks: sampleWeeks(today), sample: true, version: 0, tab: 'quand', results: { quand: null, combien: null } };
 
 $('start').value = isoDate(today);
 $('target').value = isoDate(addDays(today, 70));
@@ -69,6 +70,7 @@ async function handleFile(file) {
     const r = interpretRows(await readRows(file), today);
     state.weeks = r.weeks;
     state.sample = false;
+    state.version++;
     const w = r.weeks;
     const period = `du ${formatDate(w[0].start, true)} au ${formatDate(addDays(w.at(-1).start, 6), true)}`;
     if (w.length < RELIABLE_WEEKS) {
@@ -80,7 +82,7 @@ async function handleFile(file) {
       setMsg(msg, 'ok', `${file.name} importé : ${w.length} semaines de débit, lues dans la colonne « ${r.column} », ${period}.`);
     }
     renderData();
-    run();
+    refresh();
   } catch (error) {
     setMsg(msg, 'err', error instanceof ForecastError ? error.message : 'Impossible de lire ce fichier. Vérifie qu\'il s\'agit d\'un fichier CSV ou Excel (.xlsx).');
   }
@@ -88,36 +90,70 @@ async function handleFile(file) {
 
 // ---------------------------------------------------------------- Prévision
 
-function showError(text) {
-  $('res-err').hidden = !text;
-  $('res-err').textContent = text ?? '';
-  $('results').hidden = Boolean(text);
+const REF_LINES = [{ value: 50, label: '50 %', cls: 'risk' }, { value: 85, label: '85 %', cls: 'likely' }, { value: 95, label: '95 %', cls: 'safe' }];
+
+/** Entrées de la simulation de l'onglet `tab`, sous une forme comparable. */
+function inputs(tab = state.tab) {
+  const common = [state.version, $('win').value, clampSims($('sims').value), $('start').value];
+  return JSON.stringify(tab === 'quand' ? [...common, Math.round(Number($('remaining').value))] : [...common, $('target').value]);
 }
 
 function setTiles(values) {
   ['50', '85', '95'].forEach((k, i) => { $(`t${k}`).textContent = values[i][0]; $(`t${k}s`).textContent = values[i][1]; });
 }
 
-const REF_LINES = [{ value: 50, label: '50 %', cls: 'risk' }, { value: 85, label: '85 %', cls: 'likely' }, { value: 95, label: '95 %', cls: 'safe' }];
-
-function run() {
+/** Lance la simulation de l'onglet actif et mémorise son résultat. */
+function launch() {
+  const tab = state.tab;
   const sample = usedWeeks().map((w) => w.count);
   const sims = clampSims($('sims').value);
   const start = fromIsoDate($('start').value) ?? today;
-  $('sim-note').textContent = `${sims.toLocaleString('fr-FR')} simulations · ${sample.length} semaines`;
+  const entry = { sig: inputs(tab), sims, weeksUsed: sample.length };
   try {
-    if (state.tab === 'quand') runWhen(sample, sims, start);
-    else runHowMany(sample, sims, start);
-    showError(null);
+    entry.result = tab === 'quand'
+      ? forecastWhen({ sample, remaining: Math.round(Number($('remaining').value)), sims, start })
+      : forecastHowMany({ sample, target: fromIsoDate($('target').value), sims, start });
   } catch (error) {
     if (!(error instanceof ForecastError)) throw error;
-    showError(error.message);
+    entry.error = error.message;
   }
+  state.results[tab] = entry;
+  show();
 }
 
-function runWhen(sample, sims, start) {
-  const r = forecastWhen({ sample, remaining: Math.round(Number($('remaining').value)), sims, start });
-  const withYear = r.levels[2].date.getFullYear() !== start.getFullYear();
+/** Affiche le résultat mémorisé de l'onglet actif (ou l'invitation, ou l'erreur). */
+function show() {
+  const entry = state.results[state.tab];
+  $('res-empty').hidden = Boolean(entry);
+  $('res-err').hidden = !entry?.error;
+  $('res-err').textContent = entry?.error ?? '';
+  $('results').hidden = !entry?.result;
+  if (entry?.result) {
+    $('sim-note').textContent = `${entry.sims.toLocaleString('fr-FR')} simulations · ${entry.weeksUsed} semaines`;
+    if (state.tab === 'quand') renderWhen(entry.result); else renderHowMany(entry.result);
+  }
+  refresh();
+}
+
+/** Signale des résultats périmés : entrées différentes de celles du résultat affiché. */
+function refresh() {
+  const entry = state.results[state.tab];
+  const stale = Boolean(entry) && entry.sig !== inputs();
+  $('stale').hidden = !stale;
+  $('results').classList.toggle('is-stale', stale);
+  $('res-err').classList.toggle('is-stale', stale);
+  updateTargetHint();
+}
+
+function updateTargetHint() {
+  const start = fromIsoDate($('start').value) ?? today;
+  const target = fromIsoDate($('target').value);
+  const weeks = target ? Math.floor((target - start) / 86_400_000 / 7) : 0;
+  $('target-hint').textContent = weeks >= 1 ? `Soit ${plural(weeks, 'semaine')} complète${weeks > 1 ? 's' : ''} de travail à partir du ${formatDate(start, true)}.` : '';
+}
+
+function renderWhen(r) {
+  const withYear = r.levels[2].date.getFullYear() !== r.start.getFullYear();
   setTiles(r.levels.map((l) => [formatDate(l.date, withYear), `dans ${plural(l.weeks, 'semaine')}`]));
   const labels = r.bars.map((b) => formatDate(b.date, withYear));
   $('h-dist').textContent = 'Date de fin selon les simulations';
@@ -136,12 +172,8 @@ function runWhen(sample, sims, start) {
   $('summary').textContent = summaryWhen(r);
 }
 
-function runHowMany(sample, sims, start) {
-  const target = fromIsoDate($('target').value);
-  const weeks = target ? Math.floor((target - start) / 86_400_000 / 7) : 0;
-  $('target-hint').textContent = weeks >= 1 ? `Soit ${plural(weeks, 'semaine')} complète${weeks > 1 ? 's' : ''} de travail à partir du ${formatDate(start, true)}.` : '';
-  const r = forecastHowMany({ sample, target, sims, start });
-  setTiles(r.levels.map((l) => [`≥ ${plural(l.tickets, 'ticket')}`, `d'ici le ${formatDate(target, true)}`]));
+function renderHowMany(r) {
+  setTiles(r.levels.map((l) => [`≥ ${plural(l.tickets, 'ticket')}`, `d'ici le ${formatDate(r.target, true)}`]));
   const range = (b) => (b.low === b.high ? String(b.low) : `${b.low}–${b.high}`);
   const labels = r.bars.map(range);
   $('h-dist').textContent = 'Tickets livrés selon les simulations';
@@ -162,9 +194,6 @@ function runHowMany(sample, sims, start) {
 
 // ---------------------------------------------------------------- Interactions
 
-let timer;
-const soon = () => { clearTimeout(timer); timer = setTimeout(run, 180); };
-
 function setTab(tab) {
   state.tab = tab;
   for (const [id, name] of [['tab-quand', 'quand'], ['tab-combien', 'combien']]) {
@@ -173,7 +202,7 @@ function setTab(tab) {
   }
   $('q-quand').hidden = tab !== 'quand';
   $('q-combien').hidden = tab !== 'combien';
-  run();
+  show();
 }
 $('tab-quand').addEventListener('click', () => setTab('quand'));
 $('tab-combien').addEventListener('click', () => setTab('combien'));
@@ -184,13 +213,23 @@ document.querySelector('[role=tablist]').addEventListener('keydown', (event) => 
   $(`tab-${next}`).focus();
 });
 
-for (const id of ['remaining', 'target', 'sims', 'start']) $(id).addEventListener('input', soon);
-$('sims').addEventListener('change', () => { $('sims').value = clampSims($('sims').value); run(); });
-$('win').addEventListener('change', () => { renderData(); run(); });
+$('launch').addEventListener('click', launch);
+for (const id of ['remaining', 'target', 'sims', 'start']) {
+  $(id).addEventListener('input', refresh);
+  $(id).addEventListener('keydown', (event) => {
+    if (event.key !== 'Enter') return;
+    event.preventDefault();
+    if (id === 'sims') $('sims').value = clampSims($('sims').value);
+    launch();
+  });
+}
+$('sims').addEventListener('change', () => { $('sims').value = clampSims($('sims').value); refresh(); });
+$('win').addEventListener('change', () => { renderData(); refresh(); });
 $('to-guide').addEventListener('click', (event) => {
   event.preventDefault();
+  $('guide').open = true;
   $('guide').scrollIntoView({ behavior: 'smooth', block: 'start' });
-  $('guide').focus({ preventScroll: true });
+  $('guide-summary').focus({ preventScroll: true });
 });
 
 const drop = $('drop');
@@ -204,9 +243,10 @@ drop.addEventListener('drop', (event) => handleFile(event.dataTransfer.files[0])
 $('reset-sample').addEventListener('click', () => {
   state.weeks = sampleWeeks(today);
   state.sample = true;
+  state.version++;
   setMsg($('import-msg'), 'info', SAMPLE_MESSAGE);
   renderData();
-  run();
+  refresh();
 });
 
 // ---------------------------------------------------------------- Copie et modèles
@@ -232,6 +272,7 @@ $('dl-xlsx').addEventListener('click', async () => {
 });
 $('dl-csv').addEventListener('click', () => save(new Blob([csvTemplate(today)], { type: 'text/csv;charset=utf-8' }), `${TEMPLATE_BASENAME}.csv`));
 
+// Premier affichage : une simulation « Quand ? » sur les données d'exemple, pour montrer les résultats.
 setMsg($('import-msg'), 'info', SAMPLE_MESSAGE);
 renderData();
-run();
+launch();

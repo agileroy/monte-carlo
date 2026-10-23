@@ -6,10 +6,13 @@ import { interpretRows, parseCsv } from '../site/js/forecast-core.js';
 
 const TODAY = new Date(2026, 9, 22);
 
-test('modèle Excel : deux onglets, en-têtes, exemples', async () => {
+test('modèle Excel : deux onglets, colonnes Clé et Résolu seulement, exemples', async () => {
   const { sheets } = await readXlsx(await xlsxTemplate(TODAY));
   assert.deepEqual(sheets.map((s) => s.name), [DATA_SHEET, HELP_SHEET]);
+  assert.deepEqual(HEADERS, ['Clé', 'Résolu']);
   assert.deepEqual(sheets[0].rows[0], HEADERS);
+  assert.ok(sheets[0].rows.every((r) => r.length <= 2));
+  assert.match(sheets[1].rows.flat().join('\n'), /Confidentialité/);
   assert.equal(sheets[0].rows.length, 1 + exampleRows(TODAY).length);
   assert.match(sheets[1].rows.flat().join('\n'), /Exporter Excel CSV/);
 });
@@ -26,7 +29,8 @@ test('modèle Excel relu et importé tel quel : onglet de données choisi', asyn
 
 test('modèle CSV : BOM, point-virgule, importable tel quel', () => {
   const text = csvTemplate(TODAY);
-  assert.ok(text.startsWith('﻿Clé;Résumé;Résolu\r\n'));
+  assert.ok(text.startsWith('\uFEFFClé;Résolu\r\n'));
+  assert.ok(text.trim().split('\r\n').every((line) => line.split(';').length === 2));
   const r = interpretRows(parseCsv(text), TODAY);
   assert.equal(r.tickets, 9);
 });

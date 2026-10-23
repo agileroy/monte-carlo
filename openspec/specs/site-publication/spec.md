@@ -36,3 +36,10 @@ Par défaut, le thème SHALL suivre le réglage du système. Un bouton SHALL bas
 - **GIVEN** un utilisateur qui a choisi le thème sombre
 - **WHEN** il recharge la page avec un système en thème clair
 - **THEN** la page s'affiche directement en thème sombre, graphiques compris
+
+### Requirement: Pied de page
+Le pied de page SHALL rappeler que les fichiers importés restent dans le navigateur. L'interface MUST NOT afficher de lien vers le code source ou le dépôt GitHub.
+
+#### Scenario: Pied de page
+- **WHEN** l'utilisateur fait défiler la page jusqu'en bas
+- **THEN** il lit la mention de confidentialité, sans lien « Code source »

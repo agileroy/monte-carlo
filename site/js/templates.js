@@ -4,7 +4,8 @@ import { writeXlsx, STYLE } from './xlsx-lite.js';
 import { addDays, mondayOf, frDate } from './forecast-core.js';
 
 export const TEMPLATE_BASENAME = 'modele-monte-carlo';
-export const HEADERS = ['Clé', 'Résumé', 'Résolu'];
+// Clé et date seulement : le titre des tickets est inutile au calcul et peut être confidentiel.
+export const HEADERS = ['Clé', 'Résolu'];
 export const DATA_SHEET = 'Tickets terminés';
 export const HELP_SHEET = "Mode d'emploi";
 
@@ -14,7 +15,7 @@ export const JQL_HISTORY = 'project = EQ AND statusCategory = Done AND resolved 
 export function exampleRows(today = new Date()) {
   const monday = mondayOf(today);
   const plan = [[3, 0], [3, 2], [3, 4], [2, 1], [2, 3], [1, 0], [1, 2], [1, 3], [1, 4]];
-  return plan.map(([w, d], i) => [`EQ-${101 + i}`, 'Exemple : à remplacer par tes tickets', frDate(addDays(monday, -7 * w + d))]);
+  return plan.map(([w, d], i) => [`EQ-${101 + i}`, frDate(addDays(monday, -7 * w + d))]);
 }
 
 const HELP = [
@@ -22,10 +23,11 @@ const HELP = [
   '',
   'Format principal : une ligne par ticket terminé, dans l\'onglet « Tickets terminés ».',
   '• Résolu (obligatoire) : date à laquelle le ticket a été terminé, au format jj/mm/aaaa.',
-  '• Clé et Résumé (facultatifs) : pour contrôler l\'import.',
-  'Remplace les lignes d\'exemple par tes tickets, puis importe le fichier dans l\'appli.',
+  '• Clé (facultative) : pour contrôler l\'import.',
+  'Confidentialité : n\'ajoute ni le titre (Résumé) ni la description des tickets, ils ne servent pas au calcul.',
+  'Remplace les lignes d\'exemple (EQ-101 à EQ-109) par tes tickets, puis importe le fichier dans l\'appli.',
   '',
-  'Depuis Jira : recherche avancée en JQL, colonnes Clé, Résumé et Résolu, puis Exporter › Exporter Excel CSV (champs actuels).',
+  'Depuis Jira : recherche avancée en JQL, colonnes Clé et Résolu uniquement, puis Exporter › Exporter Excel CSV (champs actuels).',
   `Requête conseillée (remplacer EQ par la clé du projet) : ${JQL_HISTORY}`,
   '',
   'Format alternatif, déjà agrégé : deux colonnes « Semaine » (date du lundi) et « Tickets terminés » (nombre).',
@@ -39,7 +41,7 @@ export function templateSheets(today = new Date()) {
     {
       name: DATA_SHEET,
       freezeRows: 1,
-      colWidths: [12, 44, 14],
+      colWidths: [14, 14],
       rows: [HEADERS.map((value) => ({ value, style: STYLE.header })), ...exampleRows(today)],
     },
     {
