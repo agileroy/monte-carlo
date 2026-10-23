@@ -18,15 +18,17 @@ Les fichiers importés restent dans le navigateur : rien n'est envoyé, et la pa
 1. Télécharge le modèle Excel ou CSV depuis l'appli, ou exporte directement depuis Jira (le guide est intégré à la page).
 2. Importe le fichier par glisser-déposer.
 3. Règle l'historique utilisé, le nombre de simulations (10 000 par défaut) et la date de départ.
-4. Choisis la question et lis le résultat.
+4. Choisis la question, puis clique sur **Lancer la simulation** (ou appuie sur Entrée). Si tu modifies ensuite les données ou les réglages, les résultats sont signalés comme à relancer.
 
 ## Format des données
 
 **Format principal** : une ligne par ticket terminé, avec au minimum une colonne de date de fin.
 
-| Clé | Résumé | Résolu |
-|-----|--------|--------|
-| EQ-101 | Exemple de ticket | 06/10/2026 |
+| Clé | Résolu |
+|-----|--------|
+| EQ-101 | 06/10/2026 |
+
+Par confidentialité, n'exporte ni le titre (Résumé) ni la description des tickets : ils ne servent pas au calcul. Un fichier qui en contient reste accepté, ces colonnes sont ignorées.
 
 La colonne de date est détectée automatiquement (`Résolu`, `Resolved`, `Date de fin`, `Catégorie de statut modifiée`…). Formats acceptés : `jj/mm/aaaa`, `aaaa-mm-jj`, dates Jira (`06/oct./26 10:15`, `06/Oct/26 10:15 AM`) et dates Excel. Fichiers `.csv` et `.xlsx` (2 Mo au plus).
 
@@ -45,7 +47,7 @@ AND issuetype not in subTaskIssueTypes()
 ORDER BY resolved ASC
 ```
 
-Garder les colonnes Clé, Résumé et Résolu, puis **Exporter › Exporter Excel CSV (champs actuels)**.
+Ne garder que les colonnes Clé et Résolu, puis **Exporter › Exporter Excel CSV (champs actuels)**.
 
 ## Méthode
 

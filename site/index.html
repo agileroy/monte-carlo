@@ -118,6 +118,12 @@
           <p class="small muted" id="target-hint"></p>
         </div>
 
+        <div class="launch">
+          <button type="button" class="primary" id="launch">Lancer la simulation</button>
+        </div>
+
+        <div id="stale" class="msg warn" role="status" hidden>Les données ou les réglages ont changé : relance la simulation.</div>
+        <div id="res-empty" class="empty" hidden>Lance la simulation pour voir la prévision.</div>
         <div id="res-err" class="msg err" role="alert" hidden></div>
 
         <div id="results" class="block-lg">
@@ -151,12 +157,15 @@
     </section>
   </main>
 
-  <section class="panel" id="guide" aria-labelledby="h-guide" tabindex="-1">
-    <div class="intro">
-      <span class="eyebrow">Guide</span>
-      <h2 id="h-guide">Préparer les données depuis Jira</h2>
-      <p class="muted small">Pas besoin d'estimations ni de points : la simulation n'a besoin que de la date à laquelle chaque ticket a été terminé.</p>
-    </div>
+  <details class="panel guide-panel" id="guide">
+    <summary id="guide-summary">
+      <span class="intro">
+        <span class="eyebrow">Guide</span>
+        <span class="guide-title">Préparer les données depuis Jira</span>
+        <span class="muted small">Pas besoin d'estimations ni de points : la simulation n'a besoin que de la clé et de la date à laquelle chaque ticket a été terminé.</span>
+      </span>
+      <svg class="chevron" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
+    </summary>
     <div class="guide">
       <div class="block-lg">
         <h3>Données requises</h3>
@@ -166,10 +175,10 @@
             <tbody>
               <tr><td><strong>Date de fin</strong><br><span class="small muted">une ligne par ticket terminé</span></td><td><span class="tag must">Obligatoire</span></td><td>Champ <strong>Résolu</strong> (Resolved). À défaut : <strong>Catégorie de statut modifiée</strong> (Status Category Changed).</td></tr>
               <tr><td><strong>Clé</strong></td><td><span class="tag opt">Facultatif</span></td><td>Clé du ticket (ex. EQ-128), utile pour contrôler l'import.</td></tr>
-              <tr><td><strong>Résumé</strong></td><td><span class="tag opt">Facultatif</span></td><td>Titre du ticket, pour s'y retrouver.</td></tr>
             </tbody>
           </table>
         </div>
+        <p class="msg info">Confidentialité : n'exporte ni le titre (<strong>Résumé</strong>) ni la description des tickets. Ils ne servent pas au calcul. Si ton fichier en contient, ces colonnes sont ignorées et rien ne quitte ton navigateur.</p>
         <h3>Bonnes pratiques</h3>
         <ul class="tips">
           <li>Au moins 8 semaines d'historique ; 12 à 26 semaines donnent les prévisions les plus fiables.</li>
@@ -191,7 +200,7 @@
 AND resolved >= -26w
 AND issuetype not in subTaskIssueTypes()
 ORDER BY resolved ASC</pre><button type="button" data-copy="jql1">Copier la requête</button></div></div></li>
-          <li><div><strong>Afficher la colonne « Résolu »</strong><p class="small muted">Via le bouton <strong>Colonnes</strong> en vue liste, garde au minimum <strong>Clé</strong>, <strong>Résumé</strong> et <strong>Résolu</strong>.</p></div></li>
+          <li><div><strong>Ne garder que « Clé » et « Résolu »</strong><p class="small muted">Via le bouton <strong>Colonnes</strong> en vue liste, garde uniquement <strong>Clé</strong> et <strong>Résolu</strong> : retire <strong>Résumé</strong> et les autres colonnes.</p></div></li>
           <li><div><strong>Exporter</strong><p class="small muted"><strong>Exporter › Exporter Excel CSV (champs actuels)</strong>, puis dépose le fichier dans la zone d'import. La colonne de date est détectée automatiquement.</p></div></li>
           <li><div><strong>Compter les tickets restants</strong><p class="small muted">Adapte le filtre au périmètre (version, epic…). Le nombre de résultats s'affiche en haut de la liste.</p>
             <div class="code-wrap"><pre class="code" id="jql2">project = EQ AND statusCategory != Done
@@ -201,9 +210,9 @@ AND issuetype not in subTaskIssueTypes()</pre><button type="button" data-copy="j
         <p class="small muted">Si la colonne <strong>Résolu</strong> est vide, ton workflow ne renseigne pas la résolution. Remplace alors <span class="mono">resolved</span> par <span class="mono">statusCategoryChangedDate</span> dans la requête et ajoute la colonne <strong>Catégorie de statut modifiée</strong>.</p>
       </div>
     </div>
-  </section>
+  </details>
 
-  <footer class="foot small muted">Les fichiers importés restent dans ton navigateur : rien n'est envoyé. <a class="link" href="https://github.com/vinchou59/monte-carlo">Code source</a></footer>
+  <footer class="foot small muted">Les fichiers importés restent dans ton navigateur : rien n'est envoyé.</footer>
 </div>
 </body>
 </html>
