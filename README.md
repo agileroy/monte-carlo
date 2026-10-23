@@ -42,10 +42,12 @@ Requête JQL conseillée (remplacer `EQ` par la clé du projet) :
 
 ```
 project = EQ AND statusCategory = Done
-AND resolved >= -26w
+AND resolved >= -27w
 AND issuetype not in subTaskIssueTypes()
 ORDER BY resolved ASC
 ```
+
+`-27w` remonte 27 × 7 jours depuis la recherche : une fois la semaine en cours écartée par l'appli, il reste 26 semaines complètes (la plus ancienne, partielle, n'est utilisée qu'avec « Tout l'historique »).
 
 Pour un board qui couvre plusieurs projets, le guide accepte aussi la requête de filtre du board (Paramètres du tableau › Général › Requête de filtre) : elle est mise entre parenthèses, sans son tri final, à la place de `project = EQ`.
 

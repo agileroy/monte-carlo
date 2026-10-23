@@ -53,12 +53,15 @@ export function scopeIsSet(scope) {
   return scope.mode === SCOPE.board ? Boolean(cleanFilter(scope.filter)) : Boolean(String(scope.project ?? '').trim());
 }
 
-/** Tickets terminés du périmètre sur les 26 dernières semaines, sans sous-tâches. */
+/**
+ * Tickets terminés du périmètre sur les 27 dernières semaines, sans sous-tâches. `-27w` remonte 27 × 7 jours depuis la
+ * recherche : une fois la semaine en cours écartée, il reste 26 semaines complètes (la 27e, la plus ancienne, est partielle).
+ */
 export function historyJql(scope, separator = '\n') {
   return [
     scopeClause(scope),
     'AND statusCategory = Done',
-    'AND resolved >= -26w',
+    'AND resolved >= -27w',
     'AND issuetype not in subTaskIssueTypes()',
     'ORDER BY resolved ASC',
   ].join(separator);
