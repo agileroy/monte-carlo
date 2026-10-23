@@ -28,6 +28,10 @@ Une simulation « Quand ? » est lancée automatiquement une seule fois sur les 
 
 Élément natif `<details>` / `<summary>` : accessible au clavier, sans script, et le navigateur trouve le texte replié avec la recherche (Chrome, Edge, Firefox). Replié par défaut. Le lien du panneau des données ouvre le `<details>` avant de faire défiler. Le guide reste en bas de page plutôt que dans un onglet : il sert à préparer l'import, en dehors des deux questions.
 
+### Exports limités à la clé et à la date
+
+Le titre des tickets peut révéler des projets ou des clients et n'entre pas dans le calcul. Les modèles ne gardent que « Clé » (pour contrôler l'import) et « Résolu ». La lecture des fichiers ne change pas : un export qui contient encore « Résumé » est accepté, la colonne est simplement ignorée, et rien ne quitte le navigateur. Le guide l'indique pour que l'utilisateur retire la colonne dans Jira avant d'exporter.
+
 ### Pied de page
 
 Le lien « Code source » est retiré ; le README reste la porte d'entrée du dépôt.
