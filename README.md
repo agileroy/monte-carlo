@@ -1,17 +1,19 @@
 # Prévisions Monte Carlo
 
-Application web d'une seule page pour prévoir la livraison d'une équipe à partir de son débit réel (nombre de tickets terminés par semaine), par simulation de Monte Carlo.
+Application web pour prévoir la livraison d'une équipe à partir de son débit réel (nombre de tickets terminés par semaine), par simulation de Monte Carlo. Aucune estimation n'est nécessaire.
+
+En ligne : https://vinchou59.github.io/monte-carlo/
 
 Elle répond à deux questions :
 
-- **Quand aura-t-on fini ?** À partir d'un nombre de tickets restants, elle donne les dates de fin à 50 %, 85 % et 95 % de confiance.
+- **Quand aura-t-on fini ?** À partir d'un nombre de tickets restants, elle donne les dates de fin à 50 %, 85 % et 95 % de chances.
 - **Combien d'ici une date ?** À partir d'une date cible, elle donne le nombre de tickets livrables à 50 %, 85 % et 95 % de confiance.
 
 Chaque prévision affiche l'histogramme des simulations (zones risquée, probable et sûre), la courbe de probabilité cumulée et une phrase de synthèse à copier.
 
-## Utilisation
+Les fichiers importés restent dans le navigateur : rien n'est envoyé, et la page ne charge aucune ressource externe.
 
-Ouvre `index.html` dans un navigateur, ou publie le dépôt avec GitHub Pages. Rien à installer : tout tourne dans le navigateur et les données importées ne quittent pas ton poste.
+## Utilisation
 
 1. Télécharge le modèle Excel ou CSV depuis l'appli, ou exporte directement depuis Jira (le guide est intégré à la page).
 2. Importe le fichier par glisser-déposer.
@@ -26,7 +28,7 @@ Ouvre `index.html` dans un navigateur, ou publie le dépôt avec GitHub Pages. R
 |-----|--------|--------|
 | EQ-101 | Exemple de ticket | 06/10/2026 |
 
-La colonne de date est détectée automatiquement (`Résolu`, `Resolved`, `Date de fin`, `Catégorie de statut modifiée`…). Formats acceptés : `jj/mm/aaaa`, `aaaa-mm-jj`, dates Jira (`06/oct./26 10:15`, `06/Oct/26 10:15 AM`) et dates Excel.
+La colonne de date est détectée automatiquement (`Résolu`, `Resolved`, `Date de fin`, `Catégorie de statut modifiée`…). Formats acceptés : `jj/mm/aaaa`, `aaaa-mm-jj`, dates Jira (`06/oct./26 10:15`, `06/Oct/26 10:15 AM`) et dates Excel. Fichiers `.csv` et `.xlsx` (2 Mo au plus).
 
 **Format agrégé** (optionnel) : une colonne `Semaine` (date) et une colonne `Tickets terminés` (nombre).
 
@@ -47,17 +49,37 @@ Garder les colonnes Clé, Résumé et Résolu, puis **Exporter › Exporter Exce
 
 ## Méthode
 
-Pour chaque simulation, l'appli tire au hasard, semaine après semaine, un débit parmi les semaines d'historique retenues (rééchantillonnage avec remise) :
+Pour chaque simulation, l'appli tire au hasard, semaine après semaine, un débit parmi les semaines d'historique retenues (avec remise, semaines à 0 comprises) :
 
 - *Quand ?* : on additionne jusqu'à atteindre le nombre de tickets restants ; on compte les semaines.
 - *Combien ?* : on additionne sur le nombre de semaines complètes jusqu'à la date cible.
 
 Les percentiles des résultats donnent les niveaux de confiance.
 
-## Technique
+## Développement
 
-- Un seul fichier `index.html` (HTML, CSS, JavaScript).
-- [Chart.js](https://www.chartjs.org/) 4.4.1 pour les graphiques et [SheetJS](https://sheetjs.com/) 0.18.5 pour lire et générer les fichiers Excel, chargés depuis cdnjs.
+HTML, CSS et JavaScript vanilla en modules ES, sans framework ni étape de build, comme matrice-competences et poker-planning.
+
+```
+site/
+  index.html, app.css, img/
+  js/forecast-core.js   logique pure : dates, lecture des données, semaines, simulations, percentiles
+  js/xlsx-lite.js       lecture et écriture des .xlsx sans bibliothèque (repris de matrice-competences)
+  js/templates.js       modèles Excel et CSV
+  js/charts.js          graphiques SVG
+  js/ui.js              interface
+  js/theme.js           thème clair ou sombre
+tests/                  tests Node (npm test)
+openspec/               spécifications et changements (OpenSpec)
+```
+
+- Tests : `npm test` (Node.js 22).
+- Essai local : `python3 -m http.server -d site`, puis http://localhost:8000.
+- Évolutions : avec OpenSpec (`/opsx:propose`, `/opsx:apply`, `/opsx:archive`), artefacts en français.
+
+## Publication
+
+Le workflow `.github/workflows/pages.yml` lance les tests à chaque push et pull request, puis publie `site/` sur GitHub Pages depuis `main` si les tests passent. Dans **Settings › Pages**, la source doit être **GitHub Actions**.
 
 ## Licence
 
