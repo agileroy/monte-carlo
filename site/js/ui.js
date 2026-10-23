@@ -7,7 +7,7 @@ import {
 import { readXlsx, XlsxError, MAX_FILE_BYTES } from './xlsx-lite.js';
 import { xlsxTemplate, csvTemplate, dataSheet, TEMPLATE_BASENAME } from './templates.js';
 import { drawChart } from './charts.js';
-import { historyJql, remainingJql } from './jira.js';
+import { historyJql, scopeIsSet, SCOPE } from './jira.js';
 
 const $ = (id) => document.getElementById(id);
 const nf = new Intl.NumberFormat('fr-FR', { maximumFractionDigits: 1 });
@@ -250,22 +250,45 @@ $('reset-sample').addEventListener('click', () => {
   refresh();
 });
 
-// ---------------------------------------------------------------- Projet Jira du guide
+// ---------------------------------------------------------------- Périmètre de la requête du guide
 
-const PROJECT_KEY = 'monte-carlo.jira-project';
-function renderJql() {
-  const project = $('jira-project').value;
-  $('jql1').textContent = historyJql(project);
-  $('jql2').textContent = remainingJql(project);
-  $('jira-project-hint').textContent = project.trim()
-    ? 'Les requêtes ci-dessous utilisent ce projet. Il est mémorisé dans ton navigateur.'
-    : 'Saisis ton projet : les requêtes ci-dessous se mettent à jour.';
+const SCOPE_KEY = 'monte-carlo.jira-scope';
+const OLD_PROJECT_KEY = 'monte-carlo.jira-project';
+
+function currentScope() {
+  return { mode: $('scope-board').checked ? SCOPE.board : SCOPE.project, project: $('jira-project').value, filter: $('jira-filter').value };
 }
-try { $('jira-project').value = localStorage.getItem(PROJECT_KEY) ?? ''; } catch { /* stockage indisponible */ }
-$('jira-project').addEventListener('input', () => {
-  renderJql();
-  try { localStorage.setItem(PROJECT_KEY, $('jira-project').value.trim()); } catch { /* stockage indisponible : projet non mémorisé */ }
-});
+
+function renderJql() {
+  const scope = currentScope();
+  const board = scope.mode === SCOPE.board;
+  $('project-field').hidden = board;
+  $('board-field').hidden = !board;
+  $('jql1').textContent = historyJql(scope);
+  $('jira-scope-hint').textContent = scopeIsSet(scope)
+    ? 'La requête de l\'étape 2 utilise ce périmètre. Il est mémorisé dans ton navigateur.'
+    : board ? 'Colle la requête de ton board : la requête de l\'étape 2 se met à jour.' : 'Saisis ton projet : la requête de l\'étape 2 se met à jour.';
+}
+
+function saveScope() {
+  const { mode, project, filter } = currentScope();
+  try { localStorage.setItem(SCOPE_KEY, JSON.stringify({ mode, project: project.trim(), filter: filter.trim() })); } catch { /* stockage indisponible : périmètre non mémorisé */ }
+}
+
+try {
+  const saved = JSON.parse(localStorage.getItem(SCOPE_KEY) ?? 'null');
+  if (saved && typeof saved === 'object') {
+    $('jira-project').value = typeof saved.project === 'string' ? saved.project : '';
+    $('jira-filter').value = typeof saved.filter === 'string' ? saved.filter : '';
+    $(saved.mode === SCOPE.board ? 'scope-board' : 'scope-project').checked = true;
+  } else {
+    $('jira-project').value = localStorage.getItem(OLD_PROJECT_KEY) ?? '';
+  }
+} catch { /* stockage indisponible ou illisible : valeurs par défaut */ }
+
+for (const id of ['scope-project', 'scope-board', 'jira-project', 'jira-filter']) {
+  $(id).addEventListener(id.startsWith('scope') ? 'change' : 'input', () => { renderJql(); saveScope(); });
+}
 renderJql();
 
 // ---------------------------------------------------------------- Copie et modèles

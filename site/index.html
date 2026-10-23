@@ -108,7 +108,7 @@
             <label for="remaining">Tickets restants à terminer</label>
             <input id="remaining" type="number" min="1" max="5000" step="1" value="40" inputmode="numeric">
           </div>
-          <p class="small muted">Compte les tickets non terminés du périmètre (version, epic, release) avec la requête de l'étape 5 du guide.</p>
+          <p class="small muted">Compte dans Jira les tickets non terminés du périmètre (version, epic, release), sans sous-tâches.</p>
         </div>
         <div class="question" id="q-combien" hidden>
           <div class="field">
@@ -193,19 +193,29 @@
 
       <div class="block-lg">
         <h3>Extraire l'historique, étape par étape</h3>
-        <div class="field project-field">
-          <label for="jira-project">Projet Jira (clé ou nom)</label>
-          <input id="jira-project" type="text" maxlength="100" placeholder="EQ" autocomplete="off" spellcheck="false">
-          <span class="hint" id="jira-project-hint">Saisis ton projet : les requêtes ci-dessous se mettent à jour.</span>
-        </div>
+        <fieldset class="scope">
+          <legend>Périmètre de la requête</legend>
+          <div class="scope-choice">
+            <label><input type="radio" name="jira-scope" id="scope-project" value="project" checked> Projet</label>
+            <label><input type="radio" name="jira-scope" id="scope-board" value="board"> Requête du board</label>
+          </div>
+          <div class="field" id="project-field">
+            <label for="jira-project">Projet Jira (clé ou nom)</label>
+            <input id="jira-project" type="text" maxlength="100" placeholder="EQ" autocomplete="off" spellcheck="false">
+          </div>
+          <div class="field" id="board-field" hidden>
+            <label for="jira-filter">Requête de filtre du board</label>
+            <textarea id="jira-filter" rows="3" maxlength="2000" placeholder="project in (PAY, MOB) AND component = Front ORDER BY Rank ASC" autocomplete="off" spellcheck="false"></textarea>
+            <span class="hint">Dans Jira : sur le board, <strong>…</strong> › <strong>Paramètres du tableau</strong> › <strong>Général</strong> › <strong>Requête de filtre</strong>. Copie-la telle quelle, le tri final est retiré.</span>
+          </div>
+          <span class="hint" id="jira-scope-hint"></span>
+        </fieldset>
         <ol class="steps">
           <li><div><strong>Ouvrir la recherche avancée</strong><p class="small muted">Dans Jira : <strong>Filtres › Afficher tous les tickets</strong>, puis basculer en mode <strong>JQL</strong>.</p></div></li>
-          <li><div><strong>Coller la requête</strong><p class="small muted">Elle récupère les tickets terminés du projet sur les 26 dernières semaines, sans sous-tâches.</p>
+          <li><div><strong>Coller la requête</strong><p class="small muted">Elle récupère les tickets terminés du périmètre choisi ci-dessus sur les 26 dernières semaines, sans sous-tâches.</p>
             <div class="code-wrap"><pre class="code" id="jql1"></pre><button type="button" data-copy="jql1">Copier la requête</button></div></div></li>
           <li><div><strong>Ne garder que « Clé » et « Résolu »</strong><p class="small muted">Via le bouton <strong>Colonnes</strong> en vue liste, garde uniquement <strong>Clé</strong> et <strong>Résolu</strong> : retire <strong>Résumé</strong> et les autres colonnes.</p></div></li>
           <li><div><strong>Exporter</strong><p class="small muted"><strong>Exporter › Exporter Excel CSV (champs actuels)</strong>, puis dépose le fichier dans la zone d'import. La colonne de date est détectée automatiquement.</p></div></li>
-          <li><div><strong>Compter les tickets restants</strong><p class="small muted">Adapte le filtre au périmètre (version, epic…). Le nombre de résultats s'affiche en haut de la liste.</p>
-            <div class="code-wrap"><pre class="code" id="jql2"></pre><button type="button" data-copy="jql2">Copier la requête</button></div></div></li>
         </ol>
         <p class="small muted">Si la colonne <strong>Résolu</strong> est vide, ton workflow ne renseigne pas la résolution. Remplace alors <span class="mono">resolved</span> par <span class="mono">statusCategoryChangedDate</span> dans la requête et ajoute la colonne <strong>Catégorie de statut modifiée</strong>.</p>
       </div>

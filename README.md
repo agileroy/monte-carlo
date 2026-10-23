@@ -47,6 +47,8 @@ AND issuetype not in subTaskIssueTypes()
 ORDER BY resolved ASC
 ```
 
+Pour un board qui couvre plusieurs projets, le guide accepte aussi la requête de filtre du board (Paramètres du tableau › Général › Requête de filtre) : elle est mise entre parenthèses, sans son tri final, à la place de `project = EQ`.
+
 Ne garder que les colonnes Clé et Résolu, puis **Exporter › Exporter Excel CSV (champs actuels)**.
 
 ## Méthode
@@ -68,7 +70,7 @@ site/
   js/forecast-core.js   logique pure : dates, lecture des données, semaines, simulations, percentiles
   js/xlsx-lite.js       lecture et écriture des .xlsx sans bibliothèque (repris de matrice-competences)
   js/templates.js       modèles Excel et CSV
-  js/jira.js            requêtes JQL du guide, pour le projet saisi
+  js/jira.js            requête JQL du guide, pour le projet ou la requête du board saisis
   js/charts.js          graphiques SVG
   js/ui.js              interface
   js/theme.js           thème clair ou sombre
