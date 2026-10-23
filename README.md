@@ -68,6 +68,7 @@ site/
   js/forecast-core.js   logique pure : dates, lecture des données, semaines, simulations, percentiles
   js/xlsx-lite.js       lecture et écriture des .xlsx sans bibliothèque (repris de matrice-competences)
   js/templates.js       modèles Excel et CSV
+  js/jira.js            requêtes JQL du guide, pour le projet saisi
   js/charts.js          graphiques SVG
   js/ui.js              interface
   js/theme.js           thème clair ou sombre

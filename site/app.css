@@ -103,7 +103,7 @@ button.link:hover { background: none; }
 .field { display: flex; flex-direction: column; gap: 5px; min-width: 0; }
 .field label { font-size: 0.82rem; font-weight: 550; color: var(--ink-2); }
 .field .hint { font-size: 0.75rem; color: var(--ink-3); }
-input[type="number"], input[type="date"], select { font: inherit; font-family: var(--font-mono); font-size: 0.9rem; background: var(--surface); color: var(--ink); border: 1px solid var(--line); border-radius: 8px; padding: 8px 10px; width: 100%; min-width: 0; min-height: 40px; }
+input[type="number"], input[type="date"], input[type="text"], select { font: inherit; font-family: var(--font-mono); font-size: 0.9rem; background: var(--surface); color: var(--ink); border: 1px solid var(--line); border-radius: 8px; padding: 8px 10px; width: 100%; min-width: 0; min-height: 40px; }
 
 .msg { font-size: 0.85rem; border-radius: 8px; padding: 9px 12px; }
 .msg.err { background: var(--risk-soft); }
@@ -191,6 +191,7 @@ button.primary:hover { background: var(--accent); border-color: var(--accent); f
 .steps li { display: grid; grid-template-columns: 28px minmax(0, 1fr); gap: 10px; counter-increment: s; }
 .steps li::before { content: counter(s); font-family: var(--font-mono); font-size: 0.8rem; font-weight: 550; width: 26px; height: 26px; border-radius: 50%; background: var(--accent-soft); color: var(--accent); display: flex; align-items: center; justify-content: center; }
 .steps li > div { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+.project-field { max-width: 360px; }
 .code-wrap { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
 .code-wrap button { align-self: flex-start; font-size: 0.78rem; padding: 5px 10px; }
 .code { margin: 0; background: var(--surface-2); border-radius: 8px; padding: 10px 12px; font-family: var(--font-mono); font-size: 0.8rem; overflow-x: auto; white-space: pre; color: var(--ink); }

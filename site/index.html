@@ -193,19 +193,19 @@
 
       <div class="block-lg">
         <h3>Extraire l'historique, étape par étape</h3>
+        <div class="field project-field">
+          <label for="jira-project">Projet Jira (clé ou nom)</label>
+          <input id="jira-project" type="text" maxlength="100" placeholder="EQ" autocomplete="off" spellcheck="false">
+          <span class="hint" id="jira-project-hint">Saisis ton projet : les requêtes ci-dessous se mettent à jour.</span>
+        </div>
         <ol class="steps">
           <li><div><strong>Ouvrir la recherche avancée</strong><p class="small muted">Dans Jira : <strong>Filtres › Afficher tous les tickets</strong>, puis basculer en mode <strong>JQL</strong>.</p></div></li>
-          <li><div><strong>Coller la requête</strong><p class="small muted">Remplace <span class="mono">EQ</span> par la clé de ton projet. Elle récupère les tickets terminés sur les 26 dernières semaines, sans sous-tâches.</p>
-            <div class="code-wrap"><pre class="code" id="jql1">project = EQ AND statusCategory = Done
-AND resolved >= -26w
-AND issuetype not in subTaskIssueTypes()
-ORDER BY resolved ASC</pre><button type="button" data-copy="jql1">Copier la requête</button></div></div></li>
+          <li><div><strong>Coller la requête</strong><p class="small muted">Elle récupère les tickets terminés du projet sur les 26 dernières semaines, sans sous-tâches.</p>
+            <div class="code-wrap"><pre class="code" id="jql1"></pre><button type="button" data-copy="jql1">Copier la requête</button></div></div></li>
           <li><div><strong>Ne garder que « Clé » et « Résolu »</strong><p class="small muted">Via le bouton <strong>Colonnes</strong> en vue liste, garde uniquement <strong>Clé</strong> et <strong>Résolu</strong> : retire <strong>Résumé</strong> et les autres colonnes.</p></div></li>
           <li><div><strong>Exporter</strong><p class="small muted"><strong>Exporter › Exporter Excel CSV (champs actuels)</strong>, puis dépose le fichier dans la zone d'import. La colonne de date est détectée automatiquement.</p></div></li>
           <li><div><strong>Compter les tickets restants</strong><p class="small muted">Adapte le filtre au périmètre (version, epic…). Le nombre de résultats s'affiche en haut de la liste.</p>
-            <div class="code-wrap"><pre class="code" id="jql2">project = EQ AND statusCategory != Done
-AND fixVersion = "Version 2.4"
-AND issuetype not in subTaskIssueTypes()</pre><button type="button" data-copy="jql2">Copier la requête</button></div></div></li>
+            <div class="code-wrap"><pre class="code" id="jql2"></pre><button type="button" data-copy="jql2">Copier la requête</button></div></div></li>
         </ol>
         <p class="small muted">Si la colonne <strong>Résolu</strong> est vide, ton workflow ne renseigne pas la résolution. Remplace alors <span class="mono">resolved</span> par <span class="mono">statusCategoryChangedDate</span> dans la requête et ajoute la colonne <strong>Catégorie de statut modifiée</strong>.</p>
       </div>

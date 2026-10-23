@@ -2,14 +2,13 @@
 
 import { writeXlsx, STYLE } from './xlsx-lite.js';
 import { addDays, mondayOf, frDate } from './forecast-core.js';
+import { historyJql } from './jira.js';
 
 export const TEMPLATE_BASENAME = 'modele-monte-carlo';
 // Clé et date seulement : le titre des tickets est inutile au calcul et peut être confidentiel.
 export const HEADERS = ['Clé', 'Résolu'];
 export const DATA_SHEET = 'Tickets terminés';
 export const HELP_SHEET = "Mode d'emploi";
-
-export const JQL_HISTORY = 'project = EQ AND statusCategory = Done AND resolved >= -26w AND issuetype not in subTaskIssueTypes() ORDER BY resolved ASC';
 
 /** Lignes d'exemple : 9 tickets terminés sur les trois semaines précédant `today`. */
 export function exampleRows(today = new Date()) {
@@ -28,7 +27,7 @@ const HELP = [
   'Remplace les lignes d\'exemple (EQ-101 à EQ-109) par tes tickets, puis importe le fichier dans l\'appli.',
   '',
   'Depuis Jira : recherche avancée en JQL, colonnes Clé et Résolu uniquement, puis Exporter › Exporter Excel CSV (champs actuels).',
-  `Requête conseillée (remplacer EQ par la clé du projet) : ${JQL_HISTORY}`,
+  `Requête conseillée (remplacer EQ par la clé du projet) : ${historyJql('', ' ')}`,
   '',
   'Format alternatif, déjà agrégé : deux colonnes « Semaine » (date du lundi) et « Tickets terminés » (nombre).',
   '',
