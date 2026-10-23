@@ -18,6 +18,7 @@
   --likely: #d4960f; --likely-soft: #fbf1dc;
   --safe: #2c8a57; --safe-soft: #e3f3ea;
   --muted-bar: #c3c7d1;
+  --hint: #3e57b5;
   --radius: 12px;
   --font: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   --font-mono: ui-monospace, "SFMono-Regular", "Cascadia Mono", Menlo, Consolas, monospace;
@@ -40,6 +41,7 @@
   --likely: #e7b443; --likely-soft: #352a12;
   --safe: #4fb67f; --safe-soft: #16301f;
   --muted-bar: #3a414d;
+  --hint: #9db0ff;
 }
 
 * { box-sizing: border-box; }
@@ -102,7 +104,20 @@ button.link:hover { background: none; }
 .fields .full { grid-column: 1 / -1; }
 .field { display: flex; flex-direction: column; gap: 5px; min-width: 0; }
 .field label { font-size: 0.82rem; font-weight: 550; color: var(--ink-2); }
-.field .hint { font-size: 0.75rem; color: var(--ink-3); }
+.hint { font-size: 0.78rem; line-height: 1.45; color: var(--hint); }
+.hint::before { content: ""; display: inline-block; width: 12px; height: 12px; margin-right: 5px; vertical-align: -1px; background: currentColor;
+  -webkit-mask: var(--icon-info) no-repeat center / contain; mask: var(--icon-info) no-repeat center / contain; }
+.hint:empty { display: none; }
+:root { --icon-info: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.2' stroke-linecap='round'%3E%3Ccircle cx='12' cy='12' r='9.5'/%3E%3Cpath d='M12 11v6M12 7.5h.01'/%3E%3C/svg%3E"); }
+
+/* Notes : conseil (accent) et point d'attention (ambre) */
+.note { display: flex; gap: 10px; align-items: flex-start; margin: 0; padding: 10px 12px; font-size: 0.85rem; line-height: 1.5; color: var(--ink);
+  background: var(--accent-soft); border-left: 3px solid var(--accent); border-radius: 0 8px 8px 0; }
+.note > svg { flex: none; margin-top: 2px; color: var(--accent); }
+.note > span { min-width: 0; }
+.note strong:first-child { font-weight: 650; }
+.note.warn { background: var(--likely-soft); border-left-color: var(--likely); }
+.note.warn > svg { color: var(--likely); }
 input[type="number"], input[type="date"], input[type="text"], select { font: inherit; font-family: var(--font-mono); font-size: 0.9rem; background: var(--surface); color: var(--ink); border: 1px solid var(--line); border-radius: 8px; padding: 8px 10px; width: 100%; min-width: 0; min-height: 40px; }
 
 .msg { font-size: 0.85rem; border-radius: 8px; padding: 9px 12px; }
@@ -192,7 +207,6 @@ button.primary:hover { background: var(--accent); border-color: var(--accent); f
 .steps li::before { content: counter(s); font-family: var(--font-mono); font-size: 0.8rem; font-weight: 550; width: 26px; height: 26px; border-radius: 50%; background: var(--accent-soft); color: var(--accent); display: flex; align-items: center; justify-content: center; }
 .steps li > div { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
 .scope { border: 1px solid var(--line); border-radius: 10px; margin: 0; padding: 12px 14px 14px; display: flex; flex-direction: column; gap: 10px; min-width: 0; }
-.scope > .hint { font-size: 0.75rem; color: var(--ink-3); }
 .scope legend { font-size: 0.82rem; font-weight: 550; color: var(--ink-2); padding: 0 4px; }
 .scope-choice { display: flex; flex-wrap: wrap; gap: 6px 18px; }
 .scope-choice label { display: inline-flex; align-items: center; gap: 6px; font-size: 0.9rem; cursor: pointer; }
