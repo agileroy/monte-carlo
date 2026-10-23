@@ -7,6 +7,7 @@ import {
 import { readXlsx, XlsxError, MAX_FILE_BYTES } from './xlsx-lite.js';
 import { xlsxTemplate, csvTemplate, dataSheet, TEMPLATE_BASENAME } from './templates.js';
 import { drawChart } from './charts.js';
+import { historyJql, remainingJql } from './jira.js';
 
 const $ = (id) => document.getElementById(id);
 const nf = new Intl.NumberFormat('fr-FR', { maximumFractionDigits: 1 });
@@ -248,6 +249,24 @@ $('reset-sample').addEventListener('click', () => {
   renderData();
   refresh();
 });
+
+// ---------------------------------------------------------------- Projet Jira du guide
+
+const PROJECT_KEY = 'monte-carlo.jira-project';
+function renderJql() {
+  const project = $('jira-project').value;
+  $('jql1').textContent = historyJql(project);
+  $('jql2').textContent = remainingJql(project);
+  $('jira-project-hint').textContent = project.trim()
+    ? 'Les requêtes ci-dessous utilisent ce projet. Il est mémorisé dans ton navigateur.'
+    : 'Saisis ton projet : les requêtes ci-dessous se mettent à jour.';
+}
+try { $('jira-project').value = localStorage.getItem(PROJECT_KEY) ?? ''; } catch { /* stockage indisponible */ }
+$('jira-project').addEventListener('input', () => {
+  renderJql();
+  try { localStorage.setItem(PROJECT_KEY, $('jira-project').value.trim()); } catch { /* stockage indisponible : projet non mémorisé */ }
+});
+renderJql();
 
 // ---------------------------------------------------------------- Copie et modèles
 
