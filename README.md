@@ -2,7 +2,7 @@
 
 Application web pour prévoir la livraison d'une équipe à partir de son débit réel (nombre de tickets terminés par semaine), par simulation de Monte Carlo. Aucune estimation n'est nécessaire.
 
-En ligne : https://vinchou59.github.io/monte-carlo/
+En ligne : https://agileroy.github.io/monte-carlo/
 
 Elle répond à deux questions :
 

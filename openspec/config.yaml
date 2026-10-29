@@ -10,7 +10,7 @@ context: |
   Données importées depuis un fichier CSV ou Excel (.xlsx), en général un export Jira (champ « Résolu ») ;
   à terme, peut-être une capture du diagramme de flux cumulé de Jira ou un connecteur Jira.
   Les données importées restent dans le navigateur : aucun serveur, aucune base, aucun envoi.
-  Hébergement : site statique sur GitHub Pages (https://vinchou59.github.io/monte-carlo/), sans serveur à maintenir.
+  Hébergement : site statique sur GitHub Pages (https://agileroy.github.io/monte-carlo/), sans serveur à maintenir.
   Aucun service tiers (ni CDN, ni police web, ni traceur) ; les éventuelles bibliothèques sont copiées dans site/vendor/.
   Le VPN de l'entreprise (proxy Zscaler) bloque GitHub Pages.
   Stack : HTML/CSS/JavaScript vanilla en modules ES, sans framework ni étape de build (dossier site/),
